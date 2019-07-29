@@ -1,3 +1,15 @@
+---
+layout:     post
+title:      "Linux Socket编程基础知识"
+date:       2015-09-16 12:00:00
+author:     "邵正"
+header-img: ""
+tags:
+    - Linux
+    - Socket  
+---
+
+
 ---------- ----------
 主题：socket编程
 ---------- ----------

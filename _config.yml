@@ -5,7 +5,7 @@ header-img: img/home-bg.jpg
 email: shaozhenged@foxmail.com
 description: "飞渡寒山踏云巅"
 #keyword: "黄玄, Hux黄玄, Hux, 鬼栈, huxpro, @huxpro, 黄玄的博客, Hux Blog, 博客, 个人网站, 互联网, 前端, 设计, 产品, 肖玉, Lynn, 肖玉的男朋友"
-#url: "http://huangxuan.me"              # your host, for absolute URL
+url: "http://shao-zheng.com"              # your host, for absolute URL
 baseurl: ""                             # for example, '/blog' if your blog hosted on 'host/blog'
 
 
@@ -14,7 +14,7 @@ baseurl: ""                             # for example, '/blog' if your blog host
 RSS: false
 #weibo_username:     huxpro
 #zhihu_username:     huxpro
-github_username:    shaozhenged
+#github_username:    shaozhenged
 #twitter_username:  huxpro
 #facebook_username:  huxpro
 
@@ -63,7 +63,7 @@ ba_track_id: 683d106958859095da8ea82cd695e660
 # Sidebar settings
 sidebar: true                           # whether or not using Sidebar.
 sidebar-about-description: "心有洞天，方能象相"
-sidebar-avatar: /img/avatar-hux.jpg      # use absolute URL, seeing it's used in both `/` and `/about/`
+sidebar-avatar: /img/avatar-shao.jpg      # use absolute URL, seeing it's used in both `/` and `/about/`
 
 
 

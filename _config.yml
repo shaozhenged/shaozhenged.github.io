@@ -5,20 +5,9 @@ SEOTitle: 象相的博客 | ShaoZheng Blog
 header-img: img/home-bg.jpg
 email: shaozhenged@foxmail.com
 description: ""
-#keyword: "黄玄, Hux黄玄, Hux, 鬼栈, huxpro, @huxpro, 黄玄的博客, Hux Blog, 博客, 个人网站, 互联网, 前端, 设计, 产品, 肖玉, Lynn, 肖玉的男朋友"
-#url: "http://huangxuan.me"              # your host, for absolute URL
+keyword: ""
+url: "http://shao-zheng.com"              # your host, for absolute URL
 baseurl: ""                             # for example, '/blog' if your blog hosted on 'host/blog'
-
-
-
-# SNS settings
-RSS: false
-#weibo_username:     huxpro
-#zhihu_username:     huxpro
-#github_username:    shaozhenged
-#twitter_username:  huxpro
-#facebook_username:  huxpro
-
 
 
 # Build settings
@@ -39,18 +28,8 @@ markdown: kramdown
 kramdown:
   input: GFM                            # use Github Flavored Markdown !important
 
-
-
 # Disqus settings
 disqus_username: shao-zheng
-
-# Duoshuo settings
-#duoshuo_username: huxblog
-# Share component is depend on Comment so we can NOT use share only.
-#duoshuo_share: true                     # set to false if you want to use Comment without Sharing
-
-
-
 
 # Analytics settings
 # Baidu Analytics
@@ -60,13 +39,10 @@ disqus_username: shao-zheng
 ga_domain: huangxuan.me
 
 
-
 # Sidebar settings
 sidebar: true                           # whether or not using Sidebar.
 sidebar-about-description: "心有洞天，方能象相"
 sidebar-avatar: /img/avatar-shao.jpg      # use absolute URL, seeing it's used in both `/` and `/about/`
-
-
 
 # Featured Tags
 featured-tags: true                     # whether or not using Feature-Tags

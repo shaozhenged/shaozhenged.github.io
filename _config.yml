@@ -1,6 +1,7 @@
 # Site settings
-title: Shao Blog
-SEOTitle: 象相的博客 | Shao Blog
+title: 象相
+heading:
+SEOTitle: 象相的博客 | ShaoZheng Blog
 header-img: img/home-bg.jpg
 email: shaozhenged@foxmail.com
 description: "飞渡寒山踏云巅"
@@ -14,7 +15,7 @@ baseurl: ""                             # for example, '/blog' if your blog host
 RSS: false
 #weibo_username:     huxpro
 #zhihu_username:     huxpro
-github_username:    shaozhenged
+#github_username:    shaozhenged
 #twitter_username:  huxpro
 #facebook_username:  huxpro
 

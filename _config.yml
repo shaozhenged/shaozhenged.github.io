@@ -70,32 +70,5 @@ sidebar-avatar: /img/avatar-shao.jpg      # use absolute URL, seeing it's used i
 
 # Featured Tags
 featured-tags: true                     # whether or not using Feature-Tags
-featured-condition-size: 1              # A tag will be featured if the size of it is more than this condition value
+featured-condition-size: 0             # A tag will be featured if the size of it is more than this condition value
 
-
-
-# Friends
-#friends: [
-#    {
-#        title: "天镶的博客",
-#        href: "http://lingyu.wang/"
-#    },{
-#        title: "Luke的自留地",
-#        href: "http://hmqk1995.github.io"
-#    },{
-#        title: "Ebn's Blog",
-#        href: "http://ebnbin.com/"
-#    },{
-#        title: "SmdCn's Blog",
-#        href: "http://blog.smdcn.net"
-#    },{
-#        title: "解旻的博客",
-#        href: "http://xieminis.me/"
-#    },{
-#        title: "DHong Say",
-#        href: "http://dhong.co"
-#    },{
-#        title: "尹峰以为",
-#        href: "http://ingf.github.io/"
-#    }
-#]

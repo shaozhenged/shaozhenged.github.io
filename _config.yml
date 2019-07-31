@@ -41,7 +41,7 @@ markdown: kramdown
 
 
 # Disqus settings
-disqus_username: shao-zheng
+#disqus_username: shao-zheng
 
 # Duoshuo settings
 #duoshuo_username: huxblog
@@ -49,7 +49,7 @@ disqus_username: shao-zheng
 #duoshuo_share: true                     # set to false if you want to use Comment without Sharing
 
 #livere settings
-livere_username
+livere_username: MTAyMC80NTcxMy8yMjIyNA==
 
 
 # Analytics settings

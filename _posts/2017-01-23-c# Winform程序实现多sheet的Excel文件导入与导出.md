@@ -626,11 +626,11 @@ namespace MQHelper
 ```
 
 
-## Excel导出##
+## Excel导出 ##
 
 从Mysql到DataSet的过程不提，下面是如何从DataSet导出到Excel。
 
-### DataSet到Excel###
+### DataSet到Excel ###
 
 ```
 public static void exportExcel(System.Data.DataSet ds, string excelFileFullPath, ArrayList sheetsNameList,Hashtable sheetsBeSave)
@@ -865,7 +865,7 @@ namespace MQHelper
 
 
 
-## JSON文件解析##
+## JSON文件解析 ##
 
 假设有一个配置数据库地址的json配置文件：
 
@@ -1042,9 +1042,9 @@ sqlConnStr=MQModifyAddressConfig.parseAddressInfo().toConnectDBStr();
 MQModifyAddressConfig.saveAddressInfo(addrJsonObject);
 ```
 
-## 界面交互##
+## 界面交互 ##
 
-### 主界面左侧导航菜单的实现###
+### 主界面左侧导航菜单的实现 ###
 
 我只需要简单的几个按钮，实现winform窗体的切换，我下载了参考资料1
 http://download.csdn.net/detail/nanzhaonan/5403457的demo，已经满足了我的需求。
@@ -1359,7 +1359,7 @@ private void panelReSize(object sender, EventArgs e)
 
 
 
-### 拖拽功能的实现###
+### 拖拽功能的实现 ###
 
 下面实现一个小功能，从comBox下拉列表中选择模型大类，从左边的listBox中选择需要新增的模型，拖拽到右边的listBox中。相反，从右到左拖拽则把右边listBox中的内容删除。
 
@@ -1433,7 +1433,7 @@ private void listBox_modelAll_MouseDown(object sender, MouseEventArgs e)
 
 
 
-### TextBox默认提示的实现###
+### TextBox默认提示的实现 ###
 C#的textBox控件没有能填写默认字符的属性，需要自己实现。
 
 如果textBox的Text为“”，则当光标离开这个textBox显示默认提示字符：
@@ -1491,7 +1491,7 @@ public FormAddPost()
 
 
 
-### 模型库连接测试的实现###
+### 模型库连接测试的实现 ###
 
 在操作导入导出之前，需要先判断是否能够连接到数据库。在界面上新增了一个Menu来实现。
 
@@ -1597,7 +1597,7 @@ class MQConnectLibTest:ModelQuery
 这个FormConnectLibTest，就是一个包含了richTextBox控件的窗体，MQModifyAddressConfig.parseAddressInfo()是从json配置文件中解析地址。
 
 
-### 全选/反选功能的实现###
+### 全选/反选功能的实现 ###
 
 这里实现一个dataGridView的全选与反选功能：
 
@@ -1692,7 +1692,7 @@ private void changeBtnExportEnabled()
 
 ```
 
-### 进度条窗体的实现###
+### 进度条窗体的实现 ###
 
 实现一个进度条，用来显示导入导出的进度：
 
@@ -1781,7 +1781,7 @@ if (this.InvokeRequired)
 
 ```
 
-### 利用反射实现字段判空###
+### 利用反射实现字段判空 ###
 
 在界面中输入局点信息的时候，有些文本框的内容可以为空，有些不能为空。
 ![这里写图片描述](https://imgconvert.csdnimg.cn/aHR0cDovL2ltZy5ibG9nLmNzZG4ubmV0LzIwMTcwMTI1MTExNDQxODE4)

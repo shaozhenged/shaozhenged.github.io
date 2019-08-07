@@ -1,7 +1,9 @@
-> 勤耕苦读，作古证今  
+> keep study,keep hungry  
 
-宰相必起于州部，猛将必发于卒伍
+This is Shao's blog
 
-以前技术杂而不精，今后专注于飞行仿真软件
+I'm familiar with c++
+
+Will be study and focus on flight simulation sciences
 
 Mail: shaozhenged@foxmail.com

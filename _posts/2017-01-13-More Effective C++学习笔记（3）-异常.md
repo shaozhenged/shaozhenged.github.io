@@ -26,7 +26,7 @@ C++中引进了异常机制，对比C语言程序员用错误码来标识错误�
 对指针说再见。不用对所有的指针说再见，但是你需要对用来操纵局部资源（local resources）的指针说再见。
 直接看代码：
 
-```
+```c++
 // 从s中读去动物信息, 然后返回一个指针
 // 指向新建立的某种类型对象
 ALA * readALA(istream& s);
@@ -43,7 +43,7 @@ void processAdoptions(istream& dataSource)
 ```
 可以不用理解这个函数的具体作用，只要认识到这一点：while循环体内定义了一个局部指针变量，每次循环完后删除这个对象。问题出现在:
 
-```
+```c++
 pa->processAdoption(); //处理收容动物
 delete pa; //删除readALA返回的对象
 
@@ -54,7 +54,7 @@ delete pa
 
 可能想到的法子是，直接在函数内部捕获这个异常：
 
-```
+```c++
 void processAdoptions(istream& dataSource)
 {
 	while (dataSource) 
@@ -86,7 +86,7 @@ C++里面和boost库里面就有这种对象，称为智能指针。
 
 简易版的auto_ptr长这样子，在它的析构函数中释放资源。
 
-```
+```c++
 template<class T>
 class auto_ptr 
 {
@@ -100,7 +100,7 @@ private:
 ```
 现在就可以放心大胆的把上面的代码重写成这样：
 
-```
+```c++
 void processAdoptions(istream& dataSource)
 {
 	while (dataSource) {
@@ -121,7 +121,7 @@ void processAdoptions(istream& dataSource)
 
 这是一个具有多媒体功能的通讯录程序。这个通讯录除了能存储通常的文字信息如姓名、地址、电话号码外，还能存储照片和声音。简化一下，假设只能存放姓名，照片，和声音，则这个类可以这样设计：
 
-```
+```c++
 class Image					// 用于图像数据
 { 
 public:
@@ -150,7 +150,7 @@ private:
 
 下面看它的构造函数和析构函数，并分析其中可能出现的问题。
 
-```
+```c++
 BookEntry::BookEntry(const string& name,const string& imageFileName,Const string& audioClipFileName)	: theName(name), theImage(0), theAudioClip(0)
 {
 	if (imageFileName != "") {
@@ -170,7 +170,7 @@ BookEntry::~BookEntry()
 在正常情况下一切安好，但当出现异常时，就存在内存泄露的风险。
 试想一下，
 
-```
+```c++
 if (audioClipFileName != "") 
 {
 	theAudioClip = new AudioClip(audioClipFileName);
@@ -183,7 +183,7 @@ if (audioClipFileName != "")
 
 可能会想到在调用构造函数时主动的捕获这个异常并做处理：
 
-```
+```c++
 void testBookEntryClass()
 {
 	BookEntry *pb = 0;
@@ -204,7 +204,7 @@ void testBookEntryClass()
 
 那更为主动，在构造函数中处理异常：
 
-```
+```c++
 BookEntry::BookEntry(const string& name,const string& imageFileName,const string& audioClipFileName)
 	: theName(name),theImage(0), theAudioClip(0)
 {
@@ -228,7 +228,7 @@ BookEntry::BookEntry(const string& name,const string& imageFileName,const string
 
 但是它没有考虑到下面这种情况。假设我们略微改动一下设计，让theImage 和theAudioClip是常量（constant）指针类型：
 
-```
+```c++
 class BookEntry				// 通讯录中的条目
 {
 public:
@@ -252,7 +252,7 @@ private:
 
 必须通过BookEntry构造函数的成员初始化表来初始化这样的指针，因为再也没有其它地方可以给const指针赋值。通常会这样初始化theImage和theAudioClip：
 
-```
+```c++
 BookEntry::BookEntry(const string& name,const string& imageFileName,const string& audioClipFileName)
 	: theName(name), theImage(imageFileName != ""? new Image(imageFileName)	: 0),
 	theAudioClip(audioClipFileName != ""? new AudioClip(audioClipFileName): 0)
@@ -264,7 +264,7 @@ BookEntry::BookEntry(const string& name,const string& imageFileName,const string
 
 替代方法是定义私有类成员函数，来完成初始化的工作，并捕获异常。
 
-```
+```c++
 class BookEntry				// 通讯录中的条目
 {
 public:
@@ -316,7 +316,7 @@ AudioClip * BookEntry::initAudioClip(const string&audioClipFileName)
 
 所以最后、最优雅、最泪奔的结论是采用条款M9的建议，把theImage 和 theAudioClip指向的对象做为一个资源，被一些局部对象管理。这个解决方法建立在这样一个事实基础上：theImage 和theAudioClip是两个指针，指向动态分配的对象，因此当指针消失的时候，这些对象应该被删除。所以我们把theImage 和 theAudioClip raw指针类型改成对应的auto_ptr类型。
 
-```
+```c++
 class BookEntry				// 通讯录中的条目
 {
 public:
@@ -346,7 +346,7 @@ BookEntry::~BookEntry() //--do nothing
 
 看书中的例子，一个Session类用来跟踪在线计算机的sessions，析构函数的作用是注销会话。
 
-```
+```c++
 class Session {
 public:
 	Session();
@@ -359,7 +359,7 @@ private:
 ```
 正常情况的析构函数是：
 
-```
+```c++
 Session::~Session()
 {
 	logDestruction(this);
@@ -369,7 +369,7 @@ Session::~Session()
 一切看上去很好，但是如果logDestruction抛出一个异常，会发生什么事呢？异常没有被Session的析构函数捕获住，所以它被传递到析构函数的调用者那里。但是如果析构函数本身的调用就是源自于某些其它异常的抛出，那么terminate函数将被自动调用，彻底终止你的程序。
 正确的做法是这样的：
 
-```
+```c++
 Session::~Session()
 {
 	try {
@@ -386,7 +386,7 @@ Session::~Session()
 从语法上看，在函数里声明参数与在catch子句中声明参数几乎没有什么差别。
 假设有一个类：
 
-```
+```c++
 class Widget //一个类，具体是什么类在这里并不重要
 { 
 };
@@ -394,7 +394,7 @@ class Widget //一个类，具体是什么类在这里并不重要
 ```
 常用的参数传递形式：
 
-```
+```c++
 void f1(Widget w); // 一些函数，其参数分别为Widget, Widget&,或Widget* 类型
 void f2(Widget& w); 
 void f3(const Widget& w); 
@@ -403,7 +403,7 @@ void f5(const Widget *pw);
 ```
 常用的catch子句中的声明参数：
 
-```
+```c++
 //一些catch 子句，用来捕获异常，异常的类型为Widget, Widget&, 或Widget*
 catch (Widget w)
 {
@@ -437,7 +437,7 @@ catch (const Widget *pw)
 什么意思？看两个抛出异常函数的例子。
 有这样一个函数，参数类型是Widget，并抛出一个Widget类型的异常：
 
-```
+```c++
 // 一个函数，从流中读值到Widget中
 istream operator >> (istream& s, Widget& w);
 
@@ -452,13 +452,13 @@ void passAndThrowWidget()
 ```
 注意函数中的最后一条语句：
 
-```
+```c++
 throw localWidget
 ```
 这里抛出的不是localWidget本身，而是它的一个拷贝。必须这么做，因为当localWidget离开了生存空间后，其析构函数将被调用。
 即使被抛出的对象不会被释放，也会进行拷贝操作。例如如果passAndThrowWidget函数声明localWidget为静态变量（static）：
 
-```
+```c++
 //--版本2
 void passAndThrowWidget()
 {
@@ -472,7 +472,7 @@ void passAndThrowWidget()
 当抛出异常时仍将复制出localWidget的一个拷贝。这表示即使通过引用来捕获异常，也不能在catch块中修改localWidget；仅仅能修改localWidget的拷贝。
 当异常对象被拷贝时，拷贝操作是由对象的拷贝构造函数完成的。该拷贝构造函数是对象的静态类型（static type）所对应类的拷贝构造函数，而不是对象的动态类型（dynamic type）对应类的拷贝构造函数。
 
-```
+```c++
 class SpecialWidget : public Widget 
 { 
 };
@@ -490,7 +490,7 @@ void passAndThrowWidget()
 
 异常是其它对象的拷贝，这个事实影响到你如何在catch块中再抛出一个异常。比如下面这两个catch块，乍一看好像一样：
 
-```
+```c++
 catch (Widget& w) // 捕获Widget异常
 {
 	... // 处理异常
@@ -506,7 +506,7 @@ catch (Widget& w) // 捕获Widget异常
 
 下面看捕获异常的三种形式：
 
-```
+```c++
 catch (Widget w)		// 通过传值捕获异常
 catch (Widget& w)		// 通过传递引用捕获 异常
 catch (const Widget& w) //通过传递指向const的引用捕获异常
@@ -519,7 +519,7 @@ catch (const Widget& w) //通过传递指向const的引用捕获异常
 
 这一点很好理解，主要是注意写catch块时的顺序。主要是杜绝写出下面这种形式：
 
-```
+```c++
 try
 {
 	...
@@ -541,7 +541,7 @@ catch (invalid_argument& ex)
 
 一般大家都知道了不要使用一个指向局部变量的指针。可能很少会写出下面这种代码：
 
-```
+```c++
 void someFunction()
 {
 	exception ex; // 局部异常对象;
@@ -555,7 +555,7 @@ void someFunction()
 ```
 但是有JAVA、C#习惯的人不经意间，可能会写出下面的这种代码：
 
-```
+```c++
 void someFunction()
 {
 	...

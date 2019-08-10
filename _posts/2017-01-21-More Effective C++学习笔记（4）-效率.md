@@ -45,14 +45,14 @@ Prefetching(预提取)是另一种方法。你可以把prefech想象成购买大
 当传送给函数的对象类型与参数类型不匹配时会产生这种情况。
 例如一个函数，它用来计算一个字符在字符串中出现的次数：
 
-```
+```c++
 // 返回ch在str中出现的次数
 size_t countChar(const string& str, char ch);
 
 ```
 在这里，输入的第一个参数是一个string类型的常量引用。然而，如果我们传递给它的参数是一个类似这样的buffer:
 
-```
+```c++
 char buffer[MAX_STRING_LEN];
 ```
 显然传入的参数类型与声明的参数类型不匹配，编译器会自动的消除这种不匹配。方法是建立一个string类型的临时对象。通过以buffer做为参数调用string的构造函数来初始化这个临时对象。countChar的参数str被绑定在这个临时的string对象上。当countChar返回时，临时对象自动释放。
@@ -63,12 +63,12 @@ char buffer[MAX_STRING_LEN];
 
 比如这个函数：
 
-```
+```c++
 void uppercasify(string& str); // 把str中所有的字符改变成大写
 ```
 注意，这里的参数是非常量引用。同样，假设传递一个数组类型的buffer：
 
-```
+```c++
 char subtleBookPlug[] = "Effective C++";
 uppercasify(subtleBookPlug); // 错误!
 
@@ -79,7 +79,7 @@ uppercasify(subtleBookPlug); // 错误!
 ### 函数返回对象时 ###
 例如operator+必须返回一个对象，以表示它的两个操作数的和。例如给定一个类型Number，这种类型的operator+被这样声明：
 
-```
+```c++
 const Number operator+(const Number& lhs,const Number& rhs);
 ```
 这个函数的返回值是临时的，因为它没有被命名；它只是函数的返回值。你必须为每次调用operator+构造和释放这个对象而付出代价。
@@ -95,7 +95,7 @@ const Number operator+(const Number& lhs,const Number& rhs);
 
 常见的错误：
 
-```
+```c++
 const Rational& operator*(const Rational& lhs,
 	const Rational& rhs)
 {
@@ -107,7 +107,7 @@ const Rational& operator*(const Rational& lhs,
 ```
 正确的做法是是返回constructor argument而不是直接返回对象，你可以这样做：
 
-```
+```c++
 // 一种高效和正确的方法，用来实现
 // 返回对象的函数
 const Rational operator*(const Rational& lhs,
@@ -120,7 +120,7 @@ const Rational operator*(const Rational& lhs,
 ```
 或者定义为内联函数 ：
 
-```
+```c++
 inline const Rational operator*(const Rational& lhs,
 	const Rational& rhs)
 {
@@ -134,7 +134,7 @@ inline const Rational operator*(const Rational& lhs,
 
 假定有一个带有单参数构造函数的类和一个重载"+"符号：
 
-```
+```c++
 class UPInt				// unlimited precision
 { 
 public: // integers 类
@@ -147,14 +147,14 @@ const UPInt operator+(const UPInt& lhs, const UPInt& rhs);
 ```
 现在考虑下面这些语句：
 
-```
+```c++
 UPInt upi1, upi2,upi3;
 upi3 = upi1 + 10;
 upi3 = 10 + upi2;
 ```
 这些语句也能够成功运行。方法是通过建立临时对象把整形数10转换为UPInts。让编译器完成这种类型转换是确实是很方便，但是建立临时对象进行类型转换工作是有开销的，而我们不想承担这种开销。更好的实现方法是实现operator+混合类型的重载。
 
-```
+```c++
 const UPInt operator+(const UPInt& lhs, const UPInt& rhs);// add UPInt and UPInt
 	
 const UPInt operator+(const UPInt& lhs, int rhs);// add UPInt and int
@@ -164,7 +164,7 @@ const UPInt operator+(int lhs, const UPInt& rhs);// add int and  UPInt
 ```
 但是不要像这样进行声明：
 
-```
+```c++
 const UPInt operator+(int lhs, int rhs); // 错误!
 ```
 在C++中有一条规则是每一个重载的operator必须带有一个用户定义类型（user-defined type）的参数。int不是用户定义类型，所以我们不能重载operator成为仅带有此[int]类型参数的函数。
@@ -173,19 +173,19 @@ const UPInt operator+(int lhs, int rhs); // 错误!
 
 大多数程序员认为如果他们能这样写代码：
 
-```
+```c++
 x = x + y; x = x - y;
 ```
 那他们也能这样写：
 
-```
+```c++
 x += y; x -= y;
 ```
 如果x和y是用户定义的类型（user-defined type），就不能确保这样。就C++来说，operator+、operator=和operator+=之间没有任何关系，因此如果你想让这三个operator同时存在并具有你所期望的关系，就必须自己实现它们。
 
 通常的方法是operator+根据operator+=来实现：
 
-```
+```c++
 template<class T>
 const T operator+(const T& lhs, const T& rhs)
 {
@@ -202,7 +202,7 @@ const T operator-(const T& lhs, const T& rhs)
 
 一点思考：如何实现operator+=？
 
-```
+```c++
 T& operator+=(const T& rhs)
 {
 	*this=*this+rhs

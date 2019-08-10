@@ -36,7 +36,7 @@ example1:
 
 一个简单的客户端程序：client1.c
 
-```
+```c++
 #include<sys/types.h>
 #include<sys/socket.h>
 #include<stdio.h>
@@ -84,7 +84,7 @@ int main()
 
 一个简单的本地服务器程序：server 1.c
 
-```
+```c++
 #include<sys/types.h>
 #include<sys/socket.h>
 #include<stdio.h>
@@ -179,7 +179,7 @@ example2:网络连接套接字
 
 client2.c:
 
-```
+```c++
 #include<sys/types.h>
 #include<sys/socket.h>
 #include<stdio.h>
@@ -229,7 +229,7 @@ int main()
 
 server2.c：
 
-```
+```c++
 #include<sys/types.h>
 #include<sys/socket.h>
 #include<stdio.h>

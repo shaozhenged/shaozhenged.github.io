@@ -36,7 +36,7 @@ tags:
 ### Excel到DataSet ###
 读sheet名字的过程：
 
-```
+```c#
   public ArrayList getExcelSheetNames(string filePath)
         {
             ArrayList arrayNames = new ArrayList();           
@@ -85,7 +85,7 @@ tags:
 
 这是个连接excel数据源的字符串，网上转来转去的也没个标准说明。
 
-```
+```c#
 private string getExcelOleDBConnectStr(string filePath)
         {
             string strConn = "Provider=Microsoft.ACE.OLEDB.12.0;"
@@ -100,7 +100,7 @@ private string getExcelOleDBConnectStr(string filePath)
 
 获得sheetName后，就是把sheet表里面的数据，挨个读到DataSet中。
 
-```
+```c#
 public DataSet excelToDataSet(string filePath,string tobeOpenSheet)
         {
             string strConn = getExcelOleDBConnectStr(filePath);
@@ -145,7 +145,7 @@ public DataSet excelToDataSet(string filePath,string tobeOpenSheet)
 
 则我给这个表建立一个对应的Bean（Java中的概念，C#中好像没有）
 
-```
+```c#
 class MQModbusTableBean:MQBeanBase
     {
         private int sn;
@@ -218,7 +218,7 @@ class MQModbusTableBean:MQBeanBase
 
 这里定义了一个Bean基类，因为我有很多这样的表，成员函数只有一个简单的一个插入操作：
 
-```
+```c#
 abstract class MQBeanBase
     {
         public abstract string toInsertSql();        
@@ -227,7 +227,7 @@ abstract class MQBeanBase
 ```
 用一个静态成员函数，根据DataSet数据来填充这个表的Bean：
 
-```
+```c#
   public static ArrayList fillModbusTable(DataSet dataSet)
         {
             ArrayList modbusTableList = new ArrayList();
@@ -298,7 +298,7 @@ abstract class MQBeanBase
 
 对于一个sheet表，可能会出现空行，需要移除空行：
 
-```
+```c#
 private static void removeEmptyRows(DataTable dt)
         {
             List<DataRow> removelist = new List<DataRow>();
@@ -327,7 +327,7 @@ private static void removeEmptyRows(DataTable dt)
 ```
 最后一步是对bean列表入库操作：
 
-```
+```c#
 public void insertEachTableNewRecord(ArrayList beanList)
         {
             StringBuilder sqlIntergate = new StringBuilder();
@@ -350,7 +350,7 @@ public void insertEachTableNewRecord(ArrayList beanList)
 与Mysql打交道的主要函数：
 获取连接到Mysql数据库的连接字符串：
 
-```
+```c#
 protected MySqlConnection getMysqlConn()  //--连接数据库
         {           
             if (sqlConnStr.Equals(""))
@@ -367,7 +367,7 @@ protected MySqlConnection getMysqlConn()  //--连接数据库
 
 执行SQL命令：
 
-```
+```c#
 public void executeNonQueryCommd(string sqlCommd)         //--执行sql命令
         {
            MySqlConnection mySqlConn=null;
@@ -396,7 +396,7 @@ public void executeNonQueryCommd(string sqlCommd)         //--执行sql命令
 
 查询sql，获取一个DataSet：
 
-```
+```c#
 public DataSet queryCommand(string sqlCommd)
         {
             DataSet ds = new DataSet();
@@ -427,7 +427,7 @@ public DataSet queryCommand(string sqlCommd)
 
 只返回一个表：
 
-```
+```c#
 public DataTable queryTableBySql(string sqlCommd)
         {
             DataTable tb = new DataTable();
@@ -451,7 +451,7 @@ public DataTable queryTableBySql(string sqlCommd)
 ```
 下面是合在一起的，所有与excel与数据库打交道的基类：
 
-```
+```c#
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -632,7 +632,7 @@ namespace MQHelper
 
 ### DataSet到Excel ###
 
-```
+```c#
 public static void exportExcel(System.Data.DataSet ds, string excelFileFullPath, ArrayList sheetsNameList,Hashtable sheetsBeSave)
         {
             if (string.IsNullOrEmpty(excelFileFullPath))
@@ -717,7 +717,7 @@ Hashtable sheetsBeSave 是一个map，包含每一个sheet对应的字段，也�
 
 完整的导出excel的类：
 
-```
+```c#
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -842,7 +842,7 @@ namespace MQHelper
 ```
 注意关闭excel进程：
 
-```
+```c#
 /// <summary>
         ///  关闭excel进程
         /// </summary>
@@ -869,7 +869,7 @@ namespace MQHelper
 
 假设有一个配置数据库地址的json配置文件：
 
-```
+```c#
 {
   "Server": "1.1.1.1",
   "Port": "5518",
@@ -891,7 +891,7 @@ Bin目录是相应平台的dll
 
 建立一个与json配置文件对应的json对象：
 
-```
+```c#
 class MQAddressJsonObject
     {
         public MQAddressJsonObject()
@@ -961,7 +961,7 @@ class MQAddressJsonObject
 
 对解析过程的封装：
 
-```
+```c#
 class MQModifyAddressConfig
     {
         private static string configPath = "";
@@ -1032,13 +1032,13 @@ class MQModifyAddressConfig
 使用方法：
 获取Mysql的连接字符串：
 
-```
+```c#
 sqlConnStr=MQModifyAddressConfig.parseAddressInfo().toConnectDBStr();
 ```
 
 把一个MQAddressJsonObject保存在配置文件中：
 
-```
+```c#
 MQModifyAddressConfig.saveAddressInfo(addrJsonObject);
 ```
 
@@ -1056,7 +1056,7 @@ http://download.csdn.net/detail/nanzhaonan/5403457的demo，已经满足了我�
 
 我做了少量的工作，把原作者的代码规范化了一下，并消除了重复代码：
 
-```
+```c#
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -1210,13 +1210,13 @@ namespace MQHelper
 
 用一个hashtable存放按钮和要展示的panel的对应关系：
 
-```
+```c#
 private Hashtable btnToPanelMap = new Hashtable();  //--每个btton对应一个面版
 ```
 
 每个button的名字设置成常量，表示系统设置、导入、导出、局点管理4个按钮：
 
-```
+```c#
 class MQCommonConst
 {
 public const string BTN_SYS_SET = "btn_sysSet";
@@ -1226,7 +1226,7 @@ public const string BTN_POS_MANAGE = "btn_posManage";
 }
 ```
 
-```
+```c#
 private void initDefaultPanel()
         {
             //--导入
@@ -1263,7 +1263,7 @@ private void initDefaultPanel()
 
 这是改变button位置的函数，当点击不同的button时，button的位置进行重新排列：
 
-```
+```c#
 private void changeBtnPos(int seq)
         {
             switch (seq)
@@ -1324,7 +1324,7 @@ private void changeBtnPos(int seq)
 ```
 这是显示指定panel的函数，当点击不同的button时，传入button名，就从hashtable中取出要显示的panel，并隐藏不用显示的panel。
 
-```
+```c#
 private void panelBringToFront(string panelName)
         {
             Panel beShow=btnToPanelMap[panelName] as Panel;
@@ -1346,7 +1346,7 @@ private void panelBringToFront(string panelName)
 ```
 Panel重绘函数：
 
-```
+```c#
 private void panelReSize(object sender, EventArgs e)
         {
             for (int i = 0; i < ActivePanel.Controls.Count; i++)
@@ -1367,7 +1367,7 @@ private void panelReSize(object sender, EventArgs e)
 
 下拉列表选择模型大类，主要是实现comBox的 SelectedIndexChanged事件：
 
-```
+```c#
 private void comBox_deviceType_SelectedIndexChanged(object sender, EventArgs e)
         { 
             string value = comBox_deviceType.SelectedValue.ToString();
@@ -1381,7 +1381,7 @@ private void comBox_deviceType_SelectedIndexChanged(object sender, EventArgs e)
 下面是实现拖拽功能的全部代码，左边的listBox名字是listBox_modelAll，表示全部模型；右边的listBox名字是listBox_selectedModel，表示选中的模型。
 通过实现listBox的MouseDown、DragEnter、DragDrop事件来实现。
 
-```
+```c#
 private void listBox_modelAll_MouseDown(object sender, MouseEventArgs e)
         {
             int iSelectedIndex = this.listBox_modelAll.SelectedIndex;
@@ -1444,7 +1444,7 @@ C#的textBox控件没有能填写默认字符的属性，需要自己实现。
 
 定义一个初始化函数：
 
-```
+```c#
      private void initTextBoxMsg()
         {
             tBox_postDetail.Text = "请输入300字符以内的局点描述，如地点、微模块数量等，可为空";
@@ -1455,7 +1455,7 @@ C#的textBox控件没有能填写默认字符的属性，需要自己实现。
 ```
 实现textBox的Enter和Leave事件，定义一个成员变量tBox_postDetailHasText来判断文本框中是否有内容。
 
-```
+```c#
 private void tBox_postDetail_Enter(object sender, EventArgs e)
         {
             if (tBox_postDetailHasText == false)
@@ -1479,7 +1479,7 @@ private void tBox_postDetail_Enter(object sender, EventArgs e)
 
 在窗体初始化的组件之后，初始化这个文本框：
 
-```
+```c#
 public FormAddPost()
         {
             InitializeComponent();
@@ -1499,7 +1499,7 @@ public FormAddPost()
 
 显示测试信息的是richTextBox控件，实现一个函数来追加文本和设置颜色，rTextBox_connTest为这个richTextBox控件的名字：
 
-```
+```c#
 private void logAppend(Color color, string text)
         {
             rTextBox_connTest.AppendText("\n");
@@ -1510,7 +1510,7 @@ private void logAppend(Color color, string text)
 
 用一个类来实现测试连接:
 
-```
+```c#
 class MQConnectLibTest:ModelQuery
     {
         public bool doTest(out string errMsg)
@@ -1564,7 +1564,7 @@ class MQConnectLibTest:ModelQuery
 参数是out类型的string，用来保存测试结果。测试方法就是打开一个数据库，如果不能打开，则捕获这个异常，并赋给out参数。
 在窗体中的使用：
 
-```
+```c#
   private void FormConnectLibTest_Load(object sender, EventArgs e)
         {
             connectToDB();
@@ -1605,7 +1605,7 @@ class MQConnectLibTest:ModelQuery
 
 全选和反选的两个函数：
 
-```
+```c#
 private void selecteAllCheckBox()
         {
             int count = dataGridView_modelSet.Rows.Count;
@@ -1647,7 +1647,7 @@ DataGridView中的第一列名字叫"selectModel"，类型是DataGridViewCheckBo
 
 使用方式是实现checkBox_selectedAll控件的CheckedChanged事件：
 
-```
+```c#
 private void checkBox_selectedAll_CheckedChanged(object sender, EventArgs e)
         {
             if (checkBox_selectedAll.Checked)
@@ -1666,7 +1666,7 @@ private void checkBox_selectedAll_CheckedChanged(object sender, EventArgs e)
 ```
 最后一个函数changeBtnExportEnabled()是更改导出按钮是否可用。
 
-```
+```c#
 private void changeBtnExportEnabled()
         {
             int i = 0;
@@ -1701,7 +1701,7 @@ private void changeBtnExportEnabled()
 更改进度条的值用到了观察者模式，在C#中就是事件与委托。
 具体的应用，由于涉及到的代码太多，无法说清楚。这里应该主要关注的一点是，由于窗体的显示线程与更改值的线程可能不是在同一线程中，所以这个进度条窗体本身也要用到委托。
 
-```
+```c#
 public partial class FormProgressBar : Form
     {
         public FormProgressBar()
@@ -1766,13 +1766,13 @@ public partial class FormProgressBar : Form
 具体的逻辑不用管，只要关注下面的代码：
 这里在窗体内定义一个委托，用来更新进度条：
 
-```
+```c#
 private delegate void SetPos(ProgressBarType type,int value, int maxValue);
 ```
 
 这里判断是否要使用委托：
 
-```
+```c#
 if (this.InvokeRequired)
   {
       SetPos setPos = new SetPos(setProgressValue);
@@ -1790,7 +1790,7 @@ if (this.InvokeRequired)
 
 另一种方法是，把判空延迟到插入数据库的时候处理。有一个局点Bean，用来存放界面中的文本框信息：
 
-```
+```c#
 class MQPostInfoBean:MQBeanBase
     {
         public MQPostInfoBean()
@@ -1850,7 +1850,7 @@ class MQPostInfoBean:MQBeanBase
 ```
 把界面上的文本框存放到Bean中之后，插入到数据库之前，利用反射机制，遍历Bean的属性，进行判空：
 
-```
+```c#
 private void checkLegalPostInfo()
         {
             Type type = postInfo.GetType();
@@ -1878,7 +1878,7 @@ private void checkLegalPostInfo()
 
 抛出的是自定义的异常：
 
-```
+```c#
 class MQFieldInfoNullException : ApplicationException  
     {
         public MQFieldInfoNullException(string message) : base(message) { }  

@@ -31,7 +31,7 @@ C++编译器除了像C语言支持数值转换，比如把char隐式转换为int
 
 举一个例子，一个array类模板，这些数组需要调用者确定边界的上限与下限：
 
-```
+```c++
 template<class T>
 class Array {
 public:
@@ -45,7 +45,7 @@ public:
 第一个构造函数允许调用者确定数组索引的范围，例如从10到20。它是一个两参数构造函数，所以不能做为类型转换函数。第二个构造函数让调用者仅仅定义数组元素的个数（使用方法与内置数组的使用相似），不过不同的是它能做为类型转换函数使用，能导致无穷的痛苦。
 反例，
 
-```
+```c++
 bool operator==(const Array<int>& lhs,
 	const Array<int>& rhs);
 
@@ -68,7 +68,7 @@ for (int i = 0; i < 10; ++i)
 if (a == b[i]) 时，编译器并不按期望的报错。
 此时编译器它把这个调用看成用Array<int>参数(对于a)和int(对于b[i])参数调用operator==函数。然而没有operator==函数是这样的参数类型，我们的编译器注意到它能通过调用Array<int>构造函数能转换int类型到Array<int>类型，这个构造函数只有一个int类型的参数。然后编译器如此去编译，生成的代码就象这样：
 
-```
+```c++
 for (int i = 0; i < 10; ++i)
 	if (a == static_cast<Array<int>>(b[i]))
 
@@ -79,7 +79,7 @@ for (int i = 0; i < 10; ++i)
 有两个解决办法，
 容易的方法是利用一个最新编译器的特性，explicit关键字。为了解决隐式类型转换而特别引入的这个特性，它的使用方法很好理解。构造函数用explicit声明，如果这样做，编译器会拒绝为了隐式类型转换而调用构造函数。显式类型转换依然合法。
 
-```
+```c++
 template<class T>
 class Array {
 public:
@@ -92,7 +92,7 @@ public:
 复杂的方法是使用proxy 类，代理类的作用就是支持其他对象的工作。
 还是这个例子，
 
-```
+```c++
 class Array 
 	{
 		public:
@@ -111,13 +111,13 @@ class Array
 ```
 现在看使用：
 
-```
+```c++
 Array<int>  a(10);
 ```
 这样声明能否成功？发生了什么？
 你的编译器要求用int参数调用Array<int>里的构造函数，但是没有这样的构造函数。编译器意识到它能从int参数转换成一个临时ArraySize对象，ArraySize对象只是Array<int>构造函数所需要的，这样编译器进行了转换。函数调用（及其后的对象建立）也就成功了。
 
-```
+```c++
 if (a == b[i])
 ```
 前面的这条语句能否成功？发生了什么？
@@ -128,7 +128,7 @@ if (a == b[i])
 例子：
 例如为了允许Rational(有理数)类隐式地转换为double类型（在用有理数进行混合类型运算时，可能有用），你可以如此声明Rational类：
 
-```
+```c++
 class Rational {
 public:	
 	Rational(int realNum,int virtualNum);
@@ -138,13 +138,13 @@ public:
 ```
 隐式调用double方法：
 
-```
+```c++
 Rational r(1, 2); // r 的值是1/2
 double d = 0.5 * r;
 ```
 这种调用方式会引起令人恼火的灵异问题，看这个反例：
 
-```
+```c++
 Rational r(1, 2);
 std::cout << r;
 ```
@@ -158,7 +158,7 @@ C++允许重载++ /-- 操作符，以前不管理解没理解，要求背牢的+
 
 重载++/--时是怎么区分它们什么时候是前缀，什么时候是后缀的？实际上它们是通过参数类型上的差异进行区分。后缀形式有一个int类型参数，当函数被调用时，编译器传递一个0做为int参数的值给该函数。
 
-```
+```c++
 class UPInt 
 { // "unlimited precision int"
 public:
@@ -174,7 +174,7 @@ public:
 ```
 使用方法：
 
-```
+```c++
 UPInt i;
 ++i; // 调用 i.operator++(); 
 i++; // 调用 i.operator++(0); 
@@ -185,7 +185,7 @@ i--; // 调用 i.operator--(0);
 
 仔细分析它们的实现：
 
-```
+```c++
 // 前缀形式：增加然后取回值
 UPInt& UPInt::operator++()
 {
@@ -206,7 +206,7 @@ const UPInt UPInt::operator++(int)
 
 主要为了防止出现类似两次调用的代码：
 
-```
+```c++
 UPInt i;
 i++++; // 两次increment后缀
 
@@ -227,7 +227,7 @@ i++++; // 两次increment后缀
 
 什么是逗号运算符？看下面条语句：
 
-```
+```c++
 for (int i = 0, j = strlen(s) - 1; i < j; ++i, --j)
 {
 }
@@ -237,12 +237,12 @@ for (int i = 0, j = strlen(s) - 1; i < j; ++i, --j)
 
 以重载"&&"运算符为例，重载了表达式
 
-```
+```c++
 if (expression1 && expression2)
 ```
 实际上等同于下面的代码之一：
 
-```
+```c++
 if (expression1.operator&&(expression2)) //--作为成员函数
 
 if (operator&&(expression1, expression2)) //--作为全局函数
@@ -258,14 +258,14 @@ if (operator&&(expression1, expression2)) //--作为全局函数
 
 在这条语句：
 
-```
+```c++
 string *ps = new string("Memory Management");
 ```
 中,new 是一个名词概念，实现了两部分的功能：第一部分是分配足够的内存以便容纳所需类型的对象。第二部分是它调用构造函数初始化内存中的对象。new操作符总是做这两件事情，你不能以任何方式改变它的行为。
 但分配内存的过程是可以改变的。new操作符调用一个函数来完成必需的内存分配，你能够重写或重载这个函数来改变它的行为。new操作符为分配内存所调用函数的名字是operator new。
 函数operator new 通常这样声明：
 
-```
+```c++
 void * operator new(size_t size);
 ```
 返回值类型是void*，参数size_t确定分配多少内存。

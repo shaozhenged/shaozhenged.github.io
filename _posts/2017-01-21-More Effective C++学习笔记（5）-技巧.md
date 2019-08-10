@@ -30,7 +30,7 @@ tags:
 
 这个可以看书上的代码：
 
-```
+```c++
 class NLComponent
 {
 public:
@@ -64,7 +64,7 @@ public:
 把非成员函数虚拟化，这里也只是个宽泛的概念，指的是根据参数的不同动态类型而其行为特性也不同。
 想像下面的代码：
 
-```
+```c++
 class NLComponent 
 {
 public:
@@ -97,7 +97,7 @@ operator<< 根据传入的参数不同，而做出了不同的动作。使用成
 ### 使用友元非成员函数 ###
 假定所有人都能访问打印机，但是只有一个打印机对象被建立。
 
-```
+```c++
 class PrintJob; // forward 声明
 				
 class Printer 
@@ -123,7 +123,7 @@ Printer& thePrinter()
 ### 使用静态成员函数 ###
 这种混合了C风格与面向对象风格的代码应尽量消除，更好的方法是把打印功能放在类中，声明为一个静态函数。
 
-```
+```c++
 class Printer
 {
 public:
@@ -156,7 +156,7 @@ Printer& Printer::thePrinter()
 2). 内联与函数内静态对象的关系
 再看一下thePrinter的非成员函数形式：
 
-```
+```c++
 Printer& thePrinter()
 {
 	static Printer p;
@@ -172,7 +172,7 @@ Printer& thePrinter()
 ### 限制对象数量 ###
 如果想要限制建立对象的数量，一种很正常的想法是计算对象的数量：
 
-```
+```c++
 class Printer {
 public:
 	class TooManyObjects {}; // 当需要的对象过多时
@@ -207,7 +207,7 @@ Printer::~Printer()
 1). 建立对象的环境
 假设新定义了一个彩色打印机，让它继承自普通打印机：
 
-```
+```c++
 class ColorPrinter : public Printer 
 {
 	...
@@ -215,7 +215,7 @@ class ColorPrinter : public Printer
 ```
 现在假设我们系统有一个普通打印机和一个彩色打印机：
 
-```
+```c++
 Printer p;
 ColorPrinter cp;
 
@@ -224,7 +224,7 @@ ColorPrinter cp;
 
 当其它对象包含Printer对象时，会发生同样的问题：
 
-```
+```c++
 class CPFMachine { // 一种机器，可以复印，打印
 private: // 发传真。
 	Printer p; // 有打印能力
@@ -240,7 +240,7 @@ CPFMachine m2; // 抛出 TooManyObjects异常
 
 解决办法是把构造函数私有，定义一个公有函数来伪造构造函数的功能。
 
-```
+```c++
 class FSA 
 {
 public:
@@ -286,7 +286,7 @@ FSA * FSA::makeFSA(const FSA& rhs)
 
 看这个例子：如果我们想仅仅在堆中建立代表unlimited precision numbers（无限精确度数字）的对象，可以这样做：
 
-```
+```c++
 class UPNumber 
 {
 public:
@@ -305,14 +305,14 @@ private:
 ```
 而使用方法是：
 
-```
+```c++
 UPNumber *p = new UPNumber;
 p->destroy();
 
 ```
 这里显示的调用destroy()伪析构函数进行释放资源。而如果尝试像类似下面的调用，
 
-```
+```c++
 UPNumber n; // 错误! (在这里合法， 但是当它的析构函数被隐式地调用时，就不合法了)
 UPNumber *p = new UPNumber; //正确
 ...
@@ -331,7 +331,7 @@ UPNumber  n;
 
 构造函数没法区分这两种情况：
 
-```
+```c++
 NonNegativeUPNumber *n1 =new NonNegativeUPNumber; // 在堆中
 NonNegativeUPNumber n2; //不再堆中
 
@@ -341,7 +341,7 @@ NonNegativeUPNumber n2; //不再堆中
 
 #### 假设使用new操作符判断 ####
 
-```
+```c++
 class UPNumber 
 {
 public:
@@ -376,7 +376,7 @@ UPNumber::UPNumber()
 
 但是考虑这样一句代码：
 
-```
+```c++
 UPNumber *numberArray = new UPNumber[100];
 ```
 会存在两个问题：
@@ -392,7 +392,7 @@ UPNumber *numberArray = new UPNumber[100];
 
 你可能会想能够使用下面这个函数来判断某个特定的地址是否在堆中：
 
-```
+```c++
 // 不正确的尝试，来判断一个地址是否在堆中
 bool onHeap(const void *address)
 {
@@ -417,7 +417,7 @@ onHeap不能工作的原因立刻变得很清楚了，它不能辨别堆对象�
 
 下面是这个HeapTracked基类的全部实现：
 
-```
+```c++
 class HeapTracked { // 混合类; 跟踪从operator new返回的ptr
 public: 
 	class MissingAddress {}; // 异常类，见下面代码
@@ -468,14 +468,14 @@ bool HeapTracked::isOnHeap() const
 ```
 注意这条语句：
 
-```
+```c++
 const void *rawAddress = dynamic_cast<const void*>(this);
 ```
 这里的this实际上可能是指向的派生类，通过dynamic_cast转换成const void*,并且将指针指向“原指针指向对象内存”的开始处。但是要注意dynamic_cast只能用于“指向至少具有一个虚拟函数的对象”的指针上。
 如何使用这个类？
 例如我们想判断Assert对象指针指向的是否是堆对象：
 
-```
+```c++
 class Asset : public HeapTracked 
 {
 private:
@@ -486,7 +486,7 @@ private:
 ```
 可以通过一个非成员函数：
 
-```
+```c++
 void inventoryAsset(const Asset *ap)
 {
 	if (ap->isOnHeap()) 
@@ -511,7 +511,7 @@ void inventoryAsset(const Asset *ap)
 #### 禁止用户直接实例化对象 ####
 比较简单，把new和delete操作定义为私有：
 
-```
+```c++
 class UPNumber 
 {
 private:
@@ -522,7 +522,7 @@ private:
 ```
 现在用户仅仅可以做允许它们做的事情：
 
-```
+```c++
 UPNumber n1; // okay
 static UPNumber n2; // also okay
 UPNumber *p = new UPNumber; // error! attempt to call private operator new
@@ -532,7 +532,7 @@ UPNumber *p = new UPNumber; // error! attempt to call private operator new
 #### 禁止做为派生类的基类被实例化 ####
 如果new、delete操作在基类中被声明为私有，而在派生类中没有对其进行改写(overwrite)，则基类和派生类都不能被实例化，因为operator new和operator delete是自动继承的。
 
-```
+```c++
 class UPNumber { ... }; // 同上
 class NonNegativeUPNumber : public UPNumber//假设这个类没有声明operator new
 {		
@@ -548,7 +548,7 @@ NonNegativeUPNumber *p = new NonNegativeUPNumber;// 错误! 试图调用private 
 #### 对象被嵌入到其它对象 ####
 UPNumber的operator new是private这一点，不会对包含UPNumber成员对象的对象的分配产生任何影响：
 
-```
+```c++
 class Asset {
 public:
 	Asset(int initValue);
@@ -573,7 +573,7 @@ Asset *pa = new Asset(100); // 正确, 调用Asset::operator new 或
 
 灵巧指针从模板中生成，因为要与内建指针类似，必须是strongly typed(强类型)的；模板参数确定指向对象的类型。大多数灵巧指针模板看起来都象这样：
 
-```
+```c++
 template<class T>
 class SmartPtr 
 {
@@ -602,7 +602,7 @@ private:
 
 这是一个C++的简易的auto_ptr模板：
 
-```
+```c++
 template<class T>
 class auto_ptr {
 public:
@@ -616,7 +616,7 @@ private:
 ```
 假如auto_ptr拥有对象时，它可以正常运行。但是当auto_ptr被拷贝或被赋值时，会发生什么情况呢？
 
-```
+```c++
 auto_ptr<TreeNode> ptn1(new TreeNode);
 auto_ptr<TreeNode> ptn2 = ptn1;		// 调用拷贝构造函数
 									//会发生什么情况？
@@ -629,7 +629,7 @@ ptn3 = ptn2;						// 调用 operator=;
 
 为了解决这个问题，使用“当auto_ptr被拷贝和赋值时，对象所有权随之被传递”的方法。
 
-```
+```c++
 template<class T>
 class auto_ptr 
 {
@@ -664,7 +664,7 @@ auto_ptr<T>& auto_ptr<T>::operator=(auto_ptr<T>& rhs)
 
 比如：
 
-```
+```c++
 // 这个函数通常会导致灾难发生
 void printTreeNode(ostream& s, auto_ptr<TreeNode> p)
 {
@@ -683,7 +683,7 @@ int main()
 
 通常，使用引用传递来代替值传递。
 
-```
+```c++
 // 这个函数的行为更直观一些
 void printTreeNode(ostream& s,const auto_ptr<TreeNode>& p)
 {
@@ -695,7 +695,7 @@ void printTreeNode(ostream& s,const auto_ptr<TreeNode>& p)
 
 灵巧指针的析构函数通常是这样的：
 
-```
+```c++
 template<class T>
 SmartPtr<T>::~SmartPtr()
 {
@@ -713,7 +713,7 @@ SmartPtr<T>::~SmartPtr()
 让我们把注意力转向灵巧指针的核心部分，operator*和operator-> 函数。前者返回所
 指的对象。理论上，这很简单：
 
-```
+```c++
 template<class T>
 T& SmartPtr<T>::operator*() const
 {
@@ -729,7 +729,7 @@ T& SmartPtr<T>::operator*() const
 
 operator->的情况与operator*是相同的，考虑像下面类似的语句：
 
-```
+```c++
 void editTuple(DBPtr<Tuple>& pt)
 {
 	LogEntry<Tuple> entry(*pt);
@@ -742,17 +742,17 @@ void editTuple(DBPtr<Tuple>& pt)
 ```
 语句：
 
-```
+```c++
 pt->displayEditDialog();
 ```
 被编译器解释为：
 
-```
+```c++
 (pt.operator->())->displayEditDialog();
 ```
 这意味着不论operator->返回什么，它必须在返回结果上使用member-selection operator(成员选择操作符)（->）。因此operator->仅能返回两种东西：一个指向某对象的dumb pointer或另一个灵巧指针。通常情况下，直接返回一个普通dumb pointer。
 
-```
+```c++
 template<class T>
 T* SmartPtr<T>::operator->() const
 {
@@ -766,7 +766,7 @@ T* SmartPtr<T>::operator->() const
 ### 测试灵巧指针是否为NULL ###
 怎么测试一个灵巧指针是否为空？下面的语句对不对？
 
-```
+```c++
 SmartPtr<TreeNode> ptn;
 ...
 if (ptn == 0) ...	// error!
@@ -776,7 +776,7 @@ if (!ptn) ...		// error!
 ```
 我们这里要判断的实际上是灵巧指针的这个dumb pointer成员为空，而不是ptn这个对象为空，一种方法是写显示的isNull函数；一种是提供隐式类型转换操作符，如果dumb pointer成员为空，就把ptn转换成void*。
 
-```
+```c++
 template<class T>
 class SmartPtr 
 {
@@ -794,7 +794,7 @@ if (!ptn) ...				// 正确
 ```
 但是像条款M5提到的，这种隐式转换经常会碰到头疼的灵异问题。
 
-```
+```c++
 SmartPtr<Apple> pa;
 SmartPtr<Orange> po;
 ...
@@ -809,14 +809,14 @@ if (pa == po) ... // 这能够被成功编译!
 如果原来函数的原型，参数是一个dumb指针，现在以灵巧指针作为参数调用，会发生什么情况？
 比如，原来函数的原型是这样：
 
-```
+```c++
 class Tuple { ... }; // 同上
 void normalize(Tuple *pt); // 注意使用的是dumb指针
 
 ```
 现在试图用指向Tuple的灵巧指针作参数调用normalize：
 
-```
+```c++
 DBPtr<Tuple> pt;
 ...
 normalize(pt); // 错误!
@@ -824,12 +824,12 @@ normalize(pt); // 错误!
 ```
 这种调用不能够编译，因为不能把DBPtr<Tuple>转换成Tuple*。你可以这样做，从而使该函数正常运行：
 
-```
+```c++
 normalize(&*pt); // 繁琐, 但合法
 ```
 可能会想到用隐式的类型转换：
 
-```
+```c++
 template<class T> // 同上
 class DBPtr 
 {
@@ -842,7 +842,7 @@ public:
 ```
 现在看起来很美好，能够直接这样调用：
 
-```
+```c++
 DBPtr<Tuple> pt;
 ...
 normalize(pt); // 能够运行
@@ -850,7 +850,7 @@ normalize(pt); // 能够运行
 ```
 也能满足测试空值时的语法调用：
 
-```
+```c++
 if (pt == 0) ...	// 正确, 把pt转变成Tuple*				
 if (pt) ...		// 同上
 if (!pt) ...		// 同上 (reprise)
@@ -859,7 +859,7 @@ if (!pt) ...		// 同上 (reprise)
 但是它有类型转换函数所具有的缺点：
 1）、使用户能够直接访问dump指针
 
-```
+```c++
 void processTuple(DBPtr<Tuple>& pt)
 {
 	Tuple *rawTuplePtr = pt; // 把DBPtr<Tuple> 转变成
@@ -872,7 +872,7 @@ void processTuple(DBPtr<Tuple>& pt)
 因为从灵巧指针到dumb指针的转换是“用户定义类型转换”，在同一时间编译器进行这种转换的次数不能超过一次。
 还是看例子，有一个TupleAccessors类，使用的单参构造函数类型是dump指针：
 
-```
+```c++
 class TupleAccessors 
 {
 public:
@@ -883,13 +883,13 @@ public:
 ```
 现在有一个使用TupleAccessors对象作为参数的函数：
 
-```
+```c++
 TupleAccessors merge(const TupleAccessors& ta1,const TupleAccessors& ta2);
 ```
 
 如果直接使用Tuple *作为参数，能够成功调用：
 
-```
+```c++
 Tuple *pt1, *pt2;
 ...
 merge(pt1, pt2); 		// 正确, 两个指针被转换为
@@ -898,7 +898,7 @@ merge(pt1, pt2); 		// 正确, 两个指针被转换为
 ```
 如果用灵巧指针DBPtr<Tuple>进行调用，编译就会失败：
 
-```
+```c++
 DBPtr<Tuple> pt1, pt2;
 ...
 merge(pt1, pt2); 		// 错误!不能把 pt1 和
@@ -911,7 +911,7 @@ merge(pt1, pt2); 		// 错误!不能把 pt1 和
 
 考虑这段代码：
 
-```
+```c++
 DBPtr<Tuple> pt = new Tuple;
 ...
 delete pt;
@@ -929,7 +929,7 @@ delete pt;
 ![这里写图片描述](https://imgconvert.csdnimg.cn/aHR0cDovL2ltZy5ibG9nLmNzZG4ubmV0LzIwMTcwMTIxMjEwMTIyMjMw)
 下面是简易代码：
 
-```
+```c++
 class MusicProduct 
 {
 public:
@@ -959,7 +959,7 @@ public:
 ```
 有一个典型的多态函数：
 
-```
+```c++
 void displayAndPlay(const MusicProduct* pmp, int numTimes)
 {
 	for (int i = 1; i <= numTimes; ++i) 
@@ -972,7 +972,7 @@ void displayAndPlay(const MusicProduct* pmp, int numTimes)
 ```
 正常的使用情况是：
 
-```
+```c++
 Cassette *funMusic = new Cassette("Alapalooza");
 CD *nightmareMusic = new CD("Disco Hits of the 70s");
 displayAndPlay(funMusic, 10);
@@ -982,12 +982,12 @@ displayAndPlay(nightmareMusic, 0);
 但是当我们用灵巧指针替代替dumb指针，会发生什么呢？
 函数变为：
 
-```
+```c++
 void displayAndPlay(const SmartPtr<MusicProduct>& pmp,int numTimes);
 ```
 这样调用：
 
-```
+```c++
 SmartPtr<Cassette> funMusic(new Cassette("Alapalooza"));
 SmartPtr<CD> nightmareMusic(new CD("Disco Hits of the 70s"));
 displayAndPlay(funMusic, 10); // 错误!
@@ -999,7 +999,7 @@ displayAndPlay(nightmareMusic, 0); // 错误!
 
 可能想到的是在每一个派生类里，实现一个隐式类型转换操作符，类似这样：
 
-```
+```c++
 operator SmartPtr<MusicProduct>()
 {
 	return SmartPtr<MusicProduct>(pointee);
@@ -1009,7 +1009,7 @@ operator SmartPtr<MusicProduct>()
 但是这样做，破坏了模版的通用性，也有大量的重复代码。
 幸运的是，可以用成员函数模版来实现:
 
-```
+```c++
 template<class T>				// 模板类，指向T的
 class SmartPtr					// 灵巧指针
 { 
@@ -1028,7 +1028,7 @@ public:
 ```
 如果用新的灵巧指针，则下面的调用将不会是一个错误：
 
-```
+```c++
 SmartPtr<Cassette> funMusic(new Cassette("Alapalooza"));
 SmartPtr<CD> nightmareMusic(new CD("Disco Hits of the 70s"));
 displayAndPlay(funMusic, 10); 
@@ -1037,12 +1037,12 @@ displayAndPlay(nightmareMusic, 0);
 ```
 拿这句代码来说：
 
-```
+```c++
 displayAndPlay(funMusic, 10);
 ```
 funMusic对象的类型是SmartPtr<Cassette>。函数displayAndPlay期望的参数是SmartPtr<MusicProduct>地对象。编译器侦测到类型不匹配，于是寻找把funMusic转换成SmartPtr<MusicProduct>对象的方法。它在SmartPtr<MusicProduct>类里寻找带有SmartPtr<Cassette>类型参数的单参数构造函数（参见条款M5），但是没有找到。然后它们又寻找成员函数模板，以实例化产生这样的函数。它们在SmartPtr<Cassette>发现了模板，把newType绑定到MusicProduct上，生成了所需的函数。实例化函数，生成这样的代码：
 
-```
+```c++
 SmartPtr<Cassette>:: operator SmartPtr<MusicProduct>()
 {
 	return SmartPtr<MusicProduct>(pointee);
@@ -1055,7 +1055,7 @@ SmartPtr<Cassette>:: operator SmartPtr<MusicProduct>()
 
 现在考虑这段代码：
 
-```
+```c++
 template<class T>		// 同上, 包括作为类型
 class SmartPtr { ... }; // 转换操作符的成员模板
 void displayAndPlay(const SmartPtr<MusicProduct>& pmp,int howMany);
@@ -1089,7 +1089,7 @@ Overwrite(重写)：是指派生类的函数屏蔽了与其同名的基类函数
 ### 灵巧指针和const ###
 对于dumb指针来说，const既可以针对指针所指向的东西，也可以针对于指针本身，或者兼有两者的含义。
 
-```
+```c++
 CD goodCD("Flood");
 const CD *p;		// p 是一个non-const 指针
 			//指向 const CD 对象
@@ -1103,21 +1103,21 @@ const CD * const p = &goodCD;	// p 是一个const 指针
 ```
 我们自然想要让灵巧指针具有同样的灵活性。不幸的是只能在一个地方放置const，并只能对指针本身起作用，而不能针对于所指对象：
 
-```
+```c++
 const SmartPtr<CD> p = &goodCD;		 // p 是一个const 灵巧指针 
 								 // 指向 non-const CD 对象
 
 ```
 好像有一个简单的补救方法，就是建立一个指向cosnt CD的灵巧指针：
 
-```
+```c++
 SmartPtr<const CD> p = &goodCD;		// p 是一个 non-const 灵巧指针
 								// 指向const CD 对象
 
 ```
 现在我们可以建立const和non-const对象和指针的四种不同组合：
 
-```
+```c++
 SmartPtr<CD> p;				// non-const 对象
 							// non-const 指针
 SmartPtr<const CD> p;			// const 对象,
@@ -1145,7 +1145,7 @@ a~e是5个String对象，共享Hello字符串，并且有一个统计字段，�
 
 是在String内部，一个私有类（结构）保存，就是下面的StringValue：
 
-```
+```c++
 class String 
 {
 public:
@@ -1184,7 +1184,7 @@ String::StringValue::~StringValue()
 
 看下它的构造函数：
 
-```
+```c++
 class String 
 {
 public:
@@ -1196,7 +1196,7 @@ public:
 ```
 初始化构造函数的实现：
 
-```
+```c++
 String::String(const char *initValue)
 	: value(new StringValue(initValue))
 {}
@@ -1206,14 +1206,14 @@ String::String(const char *initValue)
 
 这样的用户代码：
 
-```
+```c++
 String s("More Effective C++");
 ```
 生成的数据结构是这样的：
 ![这里写图片描述](https://imgconvert.csdnimg.cn/aHR0cDovL2ltZy5ibG9nLmNzZG4ubmV0LzIwMTcwMTIyMjExMTIzNjk2)
 注意，这里对象是被独立构造的，两个同样初始化的值，并不会共享数据。
 
-```
+```c++
 String s1("More Effective C++");
 String s2("More Effective C++");
 
@@ -1223,7 +1223,7 @@ String s2("More Effective C++");
 ![这里写图片描述](https://imgconvert.csdnimg.cn/aHR0cDovL2ltZy5ibG9nLmNzZG4ubmV0LzIwMTcwMTIyMjExMjEwODg0)
 那在什么地方会实现共享？在发生拷贝的时候。
 
-```
+```c++
 String::String(const String& rhs): value(rhs.value)
 {
 	++value->refCount;
@@ -1234,7 +1234,7 @@ String::String(const String& rhs): value(rhs.value)
 
 当释放一个对象的时候，只有在引用计数为0时，才真正的删除：
 
-```
+```c++
 String::~String()
 {
 	if (--value->refCount == 0) delete value;
@@ -1243,13 +1243,13 @@ String::~String()
 ```
 当用户写下这样的代码：
 
-```
+```c++
 s1 = s2; // s1 and s2 are both String objects
 ```
 
 其结果应该是s1和s2指向相同的StringValue对象。对象的引用计数应该在赋值时被增加。并且，s1原来指向的StringValue对象的引用计数应该减少，因为s1不再具有这个值了。如果s1是拥有原来的值的唯一对象，这个值应该被销毁。
 
-```
+```c++
 String& String::operator=(const String& rhs)
 {
 	if (value == rhs.value)   // do nothing if the values are already the same
@@ -1273,7 +1273,7 @@ String& String::operator=(const String& rhs)
 
 看下书中String对象，数组下标操作[]，常量方法与非常量方法：
 
-```
+```c++
 class String 
 {
 public:
@@ -1285,7 +1285,7 @@ public:
 ```
 常量方法：
 
-```
+```c++
 const char& String::operator[](int index) const
 {
 	return value->data[index];
@@ -1294,7 +1294,7 @@ const char& String::operator[](int index) const
 ```
 非常量方法：
 
-```
+```c++
 char& String::operator[](int index)
 {
 	// if we're sharing a value with other String objects,
@@ -1319,7 +1319,7 @@ char& String::operator[](int index)
 大部分情况下，写时拷贝可以同时保证效率和正确性。但是写时拷贝也有失效的地方，看上面的源码，发生写时拷贝的前提是，它与其它对象共享。
 考虑下面这种情况：
 
-```
+```c++
 String s1 = "Hello";
 char *p = &s1[1];
 String s2 = s1;
@@ -1330,7 +1330,7 @@ String s2 = s1;
 s1与s2共享"Hello"对象，p指向"Hello"对象的首地址。
 对比两句操作：
 
-```
+```c++
 s1[0] = 'x';    //--只改变s1
 *p = 'x';      //--会同时修改s1和s2
 
@@ -1339,7 +1339,7 @@ s1[0] = 'x';    //--只改变s1
 解决方法是：在每个StringValue对象中增加一个标志以指出它是否为可共享的。在最初（对象可共享时）将标志打开，在非const的operator[]被调用时将它关闭。一旦标志被设为false，它将永远保持在这个状态。
 增加标志后的改进版本：
 
-```
+```c++
 class String 
 {
 private:
@@ -1370,7 +1370,7 @@ String::StringValue::~StringValue()
 ```
 拷贝构造函数需要先根据标志进行判断：
 
-```
+```c++
 String::String(const String& rhs)
 {
 	if (rhs.value->shareable) 
@@ -1387,7 +1387,7 @@ String::String(const String& rhs)
 ```
 非const的operator[]版本是唯一将共享标志设为false的地方：
 
-```
+```c++
 char& String::operator[](int index)
 {
 	if (value->refCount > 1) 
@@ -1408,7 +1408,7 @@ char& String::operator[](int index)
 上面的版本中，StringValue要自己管理引用计数，而引用计数不只会用在字符串类上，还会用到很多其它类上，因此设想构建一个基类来管理引用计数，任何需要用引用计数的类都必须从它继承。
 这个基类命名为RCObject，它封装了引用计数功能，如增加和减少引用计数的函数。它还包含了当这个值不再被需要时摧毁值对象的代码（也就是引用计数为0时）。最后，它包含了一个字段以跟踪这个值对象是否可共享，并提供查询这个值和将它设为false的函数。
 
-```
+```c++
 class RCObject 
 {
 public:
@@ -1429,7 +1429,7 @@ private:
 ```
 RCOject的实现代码：
 
-```
+```c++
 RCObject::RCObject(): refCount(0), shareable(true) {}
 
 RCObject::RCObject(const RCObject&)	: refCount(0), shareable(true) {}
@@ -1464,7 +1464,7 @@ bool RCObject::isShared() const
 
 另一个地方是它的赋值操作，这里什么都没作。
 
-```
+```c++
 RCObject& RCObject::operator=(const RCObject&)
 {
 	return *this;
@@ -1474,7 +1474,7 @@ RCObject& RCObject::operator=(const RCObject&)
 这里比较难理解，通过例子就能说明一切：
 假设有StringValue的sv1和sv2两个对象，StringValue是继承自RCObject的，那么它们之间的赋值操作：
 
-```
+```c++
 sv1 = sv2;
 ```
 会发生什么？
@@ -1483,7 +1483,7 @@ sv1的值会变为sv2，也就是共享sv1对象的所有对象的值都会发�
 
 下面看它的使用，重构StringValue，使它继承自RCObject：
 
-```
+```c++
 String::StringValue::StringValue(const char *initValue)
 {
 	data = new char[strlen(initValue) + 1];
@@ -1502,7 +1502,7 @@ String::StringValue::~StringValue()
 ### 自动的引用计数处理 ###
 先回顾一下原来的String版本，我们在任何拷贝指针、给指针赋值和销毁指针的时候要自己去value->refCount。
 
-```
+```c++
 class String 
 {
 public:
@@ -1520,7 +1520,7 @@ private:
 
 这是一个模版类，实际指向的是实现了RCObject的类：
 
-```
+```c++
 // template class for smart pointers-to-T objects. T must
 // support the RCObject interface, typically by inheriting
 // from RCObject
@@ -1543,7 +1543,7 @@ private:
 分成几个部分来讲下它的实现：
 看它的构造函数：
 
-```
+```c++
 template<class T>
 RCPtr<T>::RCPtr(T* realPtr) : pointee(realPtr)
 {
@@ -1573,17 +1573,17 @@ void RCPtr<T>::init()
 
 这句语句实际上调用的是T的构造函数。
 
-```
+```c++
 pointee = new T(*pointee);
 ```
 我们把T假设为StringValue，前面的所有版本中，都没有实现这样的构造函数：
 
-```
+```c++
 StringValue(const StringValue & value);
 ```
 编译器将为我们生成一个。这个生成的拷贝构造函数遵守C++的自动生成拷贝构造函数的原则，只拷贝了StringValue的数据pointer，而没有拷贝所指向的char *字符串，是一个浅拷贝。所以使用这类模版的时候，必须要提高形如下面的深层拷贝：
 
-```
+```c++
 String::StringValue::StringValue(const StringValue& rhs)
 {
 	data = new char[strlen(rhs.data) + 1];
@@ -1595,7 +1595,7 @@ String::StringValue::StringValue(const StringValue& rhs)
 
 赋值函数：
 
-```
+```c++
 template<class T>
 RCPtr<T>& RCPtr<T>::operator=(const RCPtr& rhs)
 {
@@ -1614,7 +1614,7 @@ RCPtr<T>& RCPtr<T>::operator=(const RCPtr& rhs)
 ```
 析构函数：
 
-```
+```c++
 template<class T>
 RCPtr<T>::~RCPtr()
 {
@@ -1625,7 +1625,7 @@ RCPtr<T>::~RCPtr()
 
 最后部分是smart指针的提领操作：
 
-```
+```c++
 template<class T>
 T* RCPtr<T>::operator->() const { return pointee; }
 template<class T>
@@ -1641,7 +1641,7 @@ T& RCPtr<T>::operator*() const { return *pointee; }
 ![这里写图片描述](https://imgconvert.csdnimg.cn/aHR0cDovL2ltZy5ibG9nLmNzZG4ubmV0LzIwMTcwMTIyMjEyNjE2OTk4)
 所有类的定义：
 
-```
+```c++
 template<class T> // template class for smart
 class RCPtr { // pointers-to-T objects; T must inherit from RCObject
 public: 
@@ -1658,7 +1658,7 @@ private:
 
 ```
 
-```
+```c++
 class RCObject { // base class for reference counted objects
 public: 
 	void addReference();
@@ -1678,7 +1678,7 @@ private:
 
 ```
 
-```
+```c++
 class String { // class to be used by
 public: // application developers
 	String(const char *value = "");
@@ -1702,7 +1702,7 @@ private:
 
 将所有东西放在一起，这儿是RCObject的实现：
 
-```
+```c++
 RCObject::RCObject()
 	: refCount(0), shareable(true) {}
 RCObject::RCObject(const RCObject&)
@@ -1734,7 +1734,7 @@ bool RCObject::isShared() const
 
 这是RCPtr的实现：
 
-```
+```c++
 template<class T>
 RCPtr<T>::RCPtr(T* realPtr)
 	: pointee(realPtr)
@@ -1770,7 +1770,7 @@ T& RCPtr<T>::operator*() const { return *pointee; }
 ```
 这是String::StringValue的实现：
 
-```
+```c++
 void String::StringValue::init(const char *initValue)
 {
 	data = new char[strlen(initValue) + 1];
@@ -1817,7 +1817,7 @@ char& String::operator[](int index)
 
 这个版本的技巧就在下面这个Holder类上：
 
-```
+```c++
 struct CountHolder : public RCObject {
 	~CountHolder() { delete pointee; }
 	T *pointee;
@@ -1831,12 +1831,12 @@ struct CountHolder : public RCObject {
 
 这是合法的，定义一个二维数组：
 
-```
+```c++
 int data[10][20];    // 2D array: 10 by 20
 ```
 而相同的结构如果使用变量作维的大小的话，是不可以的：
 
-```
+```c++
 void processInput(int dim1, int dim2)
 {
 	int data[dim1][dim2]; // error! array dimensions
@@ -1846,14 +1846,14 @@ void processInput(int dim1, int dim2)
 ```
 甚至，在堆分配时都是不合法的：
 
-```
+```c++
 int *data =new int[dim1][dim2];   // error!
 ```
 ### 实现二维数组 ###
 
 我们可以定义一个类模板来实现二维数组：
 
-```
+```c++
 template<class T>
 class Array2D 
 {
@@ -1866,7 +1866,7 @@ public:
 
 使用方法与通常的类构造相似：
 
-```
+```c++
 Array2D<int> data(10, 20); // fine
 Array2D<float> *data =new Array2D<float>(10, 20); // fine
 void processInput(int dim1, int dim2)
@@ -1879,14 +1879,14 @@ void processInput(int dim1, int dim2)
 
 然而，使用这些array对象并不直接了当。根据C和C++中的语法习惯，我们应该能够使用[]来索引数组：
 
-```
+```c++
 cout << data[3][6];
 ```
 不要妄想申明一个operator[][]函数，因为没有operator[][]这种东西。
 
 一种方法是重载operator()，但要容忍奇怪的语法。
 
-```
+```c++
 template<class T>
 class Array2D 
 {
@@ -1900,12 +1900,12 @@ public:
 ```
 用户于是这么使用数组：
 
-```
+```c++
 cout << data(3, 6);
 ```
 另一种方法是引入一个Array1D的代理类：
 
-```
+```c++
 int data[10][20];
 cout << data[3][6];
 
@@ -1913,7 +1913,7 @@ cout << data[3][6];
 分析上面条语句：变量data不是真正的二维数组，它是一个10元素的一维数组。其中每一个元素又都是一个20元素的数组。第一个[]返回的是一个数组，第二个[]从这个返回的数组中再去取一个元素。
 我们可以通过重载Array2D类的operator[]来玩同样的把戏。Array2D的operator[]返回一个新类Array1D的对象。再重载Array1D的operator[]来返回所需要的二维数组中的元素：
 
-```
+```c++
 Array2D
 {
 public:
@@ -1932,7 +1932,7 @@ public:
 ```
 现在，它合法了：
 
-```
+```c++
 Array2D<float> data(10, 20);
 ...
 cout << data[3][6]; // fine
@@ -1943,13 +1943,13 @@ cout << data[3][6]; // fine
 一点思考：
 前面谈到了：
 
-```
+```c++
 int *data =new int[dim1][dim2];   // error!
 ```
 这个句语是错误的，那该怎么构造Array2D呢？书中没说。
 应该不外乎类似下面的语句：
 
-```
+```c++
 //动态开辟空间  
 int **p = new int*[m]; //开辟行  
 for (int i = 0; i < m; i++)
@@ -1962,7 +1962,7 @@ for (int i = 0; i < m; i++)
 
 支持operator[]的string类型，允许用户些下这样的代码：
 
-```
+```c++
 String s1, s2;      // a string-like class; the
 			   // use of proxies keeps this
 			   // class from conforming to
@@ -1976,7 +1976,7 @@ s1[3] = s2[8]; // write s1, read s2
 能够区分读和写。
 怎么区分的，迷惑的是使用const属性重载operator[]，这样能不能区分？
 
-```
+```c++
 class String 
 {
 public:
@@ -1988,7 +1988,7 @@ public:
 ```
 唉，这不能工作。编译器根据调用成员函数的对象的const属性来选择此成员函数的const和非const版本，而不考虑调用时的环境。因此：
 
-```
+```c++
 String s1, s2;
 ...
 cout << s1[5]; // calls non-const operator[],because s1 isn't const
@@ -1999,7 +1999,7 @@ s1[3] = s2[8]; // both calls are to non-const operator[], because both s1
 ```
 解决方法是使用一个proxy对象，由proxy对象来判断是读还是写。
 
-```
+```c++
 class String { // reference-counted strings;
 public: // see Item 29 for details
 	class CharProxy { // proxies for string chars
@@ -2028,13 +2028,13 @@ private:
 
 现在，这条语句就能正常工作了：
 
-```
+```c++
 cout << s1[5];
 ```
 表达式s1[5]返回的是一CharProxy对象。没有为这样的对象定义输出流操作，所以编译器努力地寻找一个隐式的类型转换以使得operator<<调用成功（见Item M5）。它们找到一个：在CahrProxy类内部申明了一个隐式转换到char的操作。于是自动调用这个转换操作，结果就是CharProxy类扮演的字符被打印输出了。
 这是String的opertator[]函数的代码：
 
-```
+```c++
 const String::CharProxy String::operator[](int index) const
 {
 	return CharProxy(const_cast<String&>(*this), index);
@@ -2050,7 +2050,7 @@ String::CharProxy String::operator[](int index)
 proxy对象记录了它属于哪个string对象以及所扮演的字符的下标：
 
 
-```
+```c++
 String::CharProxy::CharProxy(String& str, int index)
 	: theString(str), charIndex(index) {}
 
@@ -2058,7 +2058,7 @@ String::CharProxy::CharProxy(String& str, int index)
 
 将proxy对象作右值使用时很简单，只需返回它所扮演的字符就可以了：
 
-```
+```c++
 String::CharProxy::operator char() const
 {
 	return theString.value->data[charIndex];
@@ -2067,7 +2067,7 @@ String::CharProxy::operator char() const
 ```
 回头再看CahrProxy的赋值操作的实现，这是我们必须处理proxy对象所扮演的字符作赋值的目标（即左值）使用的地方：
 
-```
+```c++
 String::CharProxy& String::CharProxy::operator=(const CharProxy& rhs)
 {
 	// if the string is sharing a value with other String objects,
@@ -2086,7 +2086,7 @@ String::CharProxy& String::CharProxy::operator=(const CharProxy& rhs)
 
 第二个CharProxy的赋值操作是类似的：
 
-```
+```c++
 String::CharProxy& String::CharProxy::operator=(char c)
 {
 	if (theString.value->isShared()) {
@@ -2103,7 +2103,7 @@ String::CharProxy& String::CharProxy::operator=(char c)
 收回上面的，CharProxy能自己判断是做左值还是右值的话，因为它不是万能的，右值不只是出现在赋值运算的情况下，还可能出现在下面这些地方：
 
 例外1：
-```
+```c++
 String s1 = "Hello";
 char *p = &s1[1]; // error!
 
@@ -2113,7 +2113,7 @@ char *p = &s1[1]; // error!
 例外2：
 如果有一个引用计数的数组：
 
-```
+```c++
 template<class T> // reference-counted array  using proxies
 class Array { 
 public:
@@ -2132,14 +2132,14 @@ public:
 ```
 常见使用：
 
-```
+```c++
 Array<int> intArray;
 ...
 intArray[5] = 22; // fine
 intArray[5] += 5; // error!
 ++intArray[5];    // error!
 
-```
+```c++
 当operator[]作最简单的赋值操作的目标时，是成功的，但当它出现operator+=和operator++的左侧时，失败了。因为operator[]返回一个proxy对象，而它没有operator+=和operator++操作。同样的情况存在于其它需要左值的操作中，包括operator*=、operator<<=、operator--等等。
 
 例外3：
@@ -2158,7 +2158,7 @@ public:
 ```
 类似的调用会出错：
 
-```
+```c++
 cout << array[4].numerator(); // error!
 int denom = array[22].denominator(); // error!
 
@@ -2181,7 +2181,7 @@ operator[]返回一个proxy对象而不是实际的Rational对象。但成员函
 
 类结构：
 
-```
+```c++
 class GameObject { ... };
 class SpaceShip : public GameObject { ... };
 class SpaceStation : public GameObject { ... };
@@ -2190,7 +2190,7 @@ class Asteroid : public GameObject { ... };
 ```
 可能处理碰撞的过程是这样的：
 
-```
+```c++
 void checkForCollision(GameObject& object1,	GameObject& object2)
 {
 	if (theyJustCollided(object1, object2)) 
@@ -2212,7 +2212,7 @@ void checkForCollision(GameObject& object1,	GameObject& object2)
 ### 用虚函数加RTTI（运行时类型识别）###
 按通常的方式，虚函数实现一个单一的调度：
 
-```
+```c++
 class GameObject 
 {
 public:
@@ -2229,7 +2229,7 @@ public:
 ```
 处理碰撞的过程变成了这样：
 
-```
+```c++
 void SpaceShip::collide(GameObject& otherObject)
 {
 	const type_info& objectType = typeid(otherObject);
@@ -2265,7 +2265,7 @@ void SpaceShip::collide(GameObject& otherObject)
 ### 只使用虚函数 ###
 下面的方法可以只用虚函数，就能确定两个对象的动态类型。在基类中重载collide函数，并且每个派生类都要实现它们：
 
-```
+```c++
 class SpaceShip; // forward declarations
 class SpaceStation;
 class Asteroid;
@@ -2291,7 +2291,7 @@ public:
 ```
 使用方法超级简单：
 
-```
+```c++
 void SpaceShip::collide(GameObject& otherObject)
 {
 	otherObject.collide(*this);
@@ -2308,7 +2308,7 @@ void SpaceShip::collide(GameObject& otherObject)
 
 新的实现版本：
 
-```
+```c++
 class GameObject 
 {
 public:
@@ -2332,7 +2332,7 @@ public:
 
 直接看最优雅的实现，用STL中的Map数据结构：
 
-```
+```c++
 class SpaceShip : public GameObject 
 {
 private:
@@ -2362,7 +2362,7 @@ SpaceShip::HitFunctionPtr SpaceShip::lookup(const GameObject& whatWeHit)
 #### 直接在lookup函数中 ###
 像这样，在每次寻找映射时，进行初始化：
 
-```
+```c++
 SpaceShip::HitFunctionPtr SpaceShip::lookup(const GameObject& whatWeHit)
 {
 	static HitMap collisionMap;
@@ -2379,7 +2379,7 @@ SpaceShip::HitFunctionPtr SpaceShip::lookup(const GameObject& whatWeHit)
 #### 定义私有初始化函数 ###
 替代方法是用一个初始化函数，过程变为这样：
 
-```
+```c++
 class SpaceShip : public GameObject 
 {
 private:
@@ -2396,7 +2396,7 @@ SpaceShip::lookup(const GameObject& whatWeHit)
 ```
 为了避免拷贝开销，替换成指针，并用智能指针代替：
 
-```
+```c++
 class SpaceShip : public GameObject 
 {
 private:
@@ -2412,7 +2412,7 @@ SpaceShip::HitFunctionPtr SpaceShip::lookup(const GameObject& whatWeHit)
 ```
 这个initializeCollisionMap函数可能想这样写：
 
-```
+```c++
 SpaceShip::HitMap * SpaceShip::initializeCollisionMap()
 {
 	HitMap *phm = new HitMap;
@@ -2425,7 +2425,7 @@ SpaceShip::HitMap * SpaceShip::initializeCollisionMap()
 ```
 但它是不可能编译成功的，因为
 
-```
+```c++
 typedef void (SpaceShip::*HitFunctionPtr)(GameObject&);
 typedef map<string, HitFunctionPtr> HitMap;
 
@@ -2434,7 +2434,7 @@ Map需要的是一个GameObject作为参数的函数指针，而不是它子类�
 
 可能想到了，直接应用reinterpret_cast进行函数类型转换：
 
-```
+```c++
 SpaceShip::HitMap * SpaceShip::initializeCollisionMap()
 {
 	HitMap *phm = new HitMap;
@@ -2457,7 +2457,7 @@ D中的四个类的部分，其地址都不同。这很重要，因为虽然指�
 
 为了解决上面这个问题，将所有的函数都改为接受GameObject类型：
 
-```
+```c++
 class GameObject 
 { // this is unchanged
 public:
@@ -2480,7 +2480,7 @@ public:
 
 这样，map赋值的时候不用函数指针类型转换，因为都是GameObject类型，但在每个具体的处理函数中，需要转换成具体的类型：
 
-```
+```c++
 SpaceShip::HitMap * SpaceShip::initializeCollisionMap()
 {
 	HitMap *phm = new HitMap;
@@ -2518,7 +2518,7 @@ void SpaceShip::hitAsteroid(GameObject& asteroid)
 
 在一个未命名的名称空间中定义碰撞处理函数、函数指针、以及映射表：
 
-```
+```c++
 #include "SpaceShip.h"
 #include "SpaceStation.h"
 #include "Asteroid.h"
@@ -2556,7 +2556,7 @@ namespace { // unnamed namespace — see below
 注意以前的映射表由一个对象确定，而现在要由两个对象确定，所以使用了STL中的pair数据结构。
 创建pair:
 
-```
+```c++
 pair<string, string> makeStringPair(const char *s1,	const char *s2)
 {
 	return pair<string, string>(s1, s2);
@@ -2565,7 +2565,7 @@ pair<string, string> makeStringPair(const char *s1,	const char *s2)
 ```
 初始化映射表：
 
-```
+```c++
 HitMap * initializeCollisionMap()
 {
 	HitMap *phm = new HitMap;
@@ -2580,7 +2580,7 @@ HitMap * initializeCollisionMap()
 ```
 查找映射表：
 
-```
+```c++
 HitFunctionPtr lookup(const string& class1,const string& class2)
 {
 	static auto_ptr<HitMap>
@@ -2595,7 +2595,7 @@ HitFunctionPtr lookup(const string& class1,const string& class2)
 ```
 处理碰撞函数：
 
-```
+```c++
 void processCollision(GameObject& object1,GameObject& object2)
 {
 	HitFunctionPtr phf = lookup(typeid(object1).name(),typeid(object2).name());

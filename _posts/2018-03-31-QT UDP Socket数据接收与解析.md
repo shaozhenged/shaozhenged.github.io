@@ -31,7 +31,7 @@ tags:
 ## 类定义 ##
 定义一个InstrumentBtnWorker，表示一个解析基础设施按钮的工人。
 
-```
+```c++
 #ifndef ASM_INSTRUMENT_BTN_WORKER_H
 #define ASM_INSTRUMENT_BTN_WORKER_H
 
@@ -74,7 +74,7 @@ net_fdm.h头文件里面定义了InstrumentBtn结构。
 ## 类实现 ##
 初始化socket：
 
-```
+```c++
 void InstrumentBtnWorker::initSocket()
 {
     udpSocket.bind(GPSGLConfige::INSTRUMENT_BTN_UDP_PORT);
@@ -87,7 +87,7 @@ void InstrumentBtnWorker::initSocket()
 
 缓存数据，并把数据传递给processDatagram处理。
 
-```
+```c++
 void InstrumentBtnWorker::readPendingDatagrams()
 {
     QByteArray datagram;
@@ -103,7 +103,7 @@ void InstrumentBtnWorker::readPendingDatagrams()
 ```
 数据处理：
 
-```
+```c++
 void InstrumentBtnWorker::processDatagram(char * datagram,int len)
 {
     InstrumentBtn btnValue;
@@ -118,7 +118,7 @@ void InstrumentBtnWorker::processDatagram(char * datagram,int len)
 
 其中的btn_input直接用memcpy强制转换数据：
 
-```
+```c++
 void btn_input(char* buf,InstrumentBtn* btn)
 {
     if(buf==NULL || btn==NULL)
@@ -137,7 +137,7 @@ void btn_input(char* buf,InstrumentBtn* btn)
 
 dispatchBtnValue，派发数据，实际上只是发送自定义的signalBtnValueChanged信号，利用QT自带的信号-槽机制实现数据传输。
 
-```
+```c++
 /*
 Note:需确保InstrumentBtn全为值类型，如果有引用类型，需实现深层拷贝
 */
@@ -149,7 +149,7 @@ void InstrumentBtnWorker::dispatchBtnValue(InstrumentBtn btnValue)
 ```
 私有构造函数、析构函数：
 
-```
+```c++
 InstrumentBtnWorker * InstrumentBtnWorker::m_instance=NULL;
 InstrumentBtnWorker * InstrumentBtnWorker::instance()
 {
@@ -181,7 +181,7 @@ InstrumentBtnWorker::~InstrumentBtnWorker()
 ## 类使用 ##
 在需要接收数据的地方，实现自己的接收槽函数，并连接到InstrumentBtnWorker的signalBtnValueChanged信号：
 
-```
+```c++
 InstrumentBtnWorker * btnWorker=InstrumentBtnWorker::instance();
 
     btnWorker->connect(btnWorker,SIGNAL(signalBtnValueChanged(InstrumentBtn)),this,SLOT(slotOnBtnChanged(InstrumentBtn)));
